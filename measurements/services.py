@@ -79,7 +79,9 @@ class InMemoeryMeasurementService(IMeasurementsService):
             systolic=systolic,
             diastolic=diastolic
         )
-
+        # xxx = [{"id": m.id, "data": m.date, ...}, ]
+        # for x in xxx:
+        #     m = Measurement(**x)  # Measurement(id=1, date="2023-11-11T12:00")
         cls.measurements.append(m)
 
         cls.id += 1

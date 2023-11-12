@@ -32,7 +32,7 @@ class FakeMeasurementsService(IMeasurementsService):
        
                 Measurement(
                     id=i,
-                    date=faker.date(),
+                    date=faker.date_time(),
                     systolic = faker.random.randint(60, 250),
                     diastolic=faker.random.randint(30, 180)
                 )
@@ -42,3 +42,26 @@ class FakeMeasurementsService(IMeasurementsService):
         return ms
     
 
+class InMemoeryMeasurementService(IMeasurementsService):
+    id = 1
+    measurements: list[Measurement] = []
+
+    @classmethod
+    def list(cls) -> list[Measurement]:
+        return cls.measurements
+    
+
+    @classmethod
+    def create(cls, systolic: int, diastolic: int, date: datetime) -> Measurement:
+
+        m = Measurement(
+            id=cls.id,
+            date=date,
+            systolic=systolic,
+            diastolic=diastolic
+        )
+
+        cls.measurements.append(m)
+
+        cls.id += 1
+        return m

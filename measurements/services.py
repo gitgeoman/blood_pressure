@@ -20,6 +20,12 @@ class IMeasurementsService(ABC):
     def list() -> list[Measurement]:
         pass
 
+    @abstractmethod
+    def create() -> Measurement:
+        pass
+        
+
+
 class FakeMeasurementsService(IMeasurementsService):
     id = 1
 
@@ -41,6 +47,19 @@ class FakeMeasurementsService(IMeasurementsService):
     
         return ms
     
+    
+    @classmethod
+    def create(cls, systolic: int, diastolic: int, date: datetime) -> Measurement:
+
+        m = Measurement(
+            id=1,
+            date=date,
+            systolic=systolic,
+            diastolic=diastolic
+        )
+
+        return m
+
 
 class InMemoeryMeasurementService(IMeasurementsService):
     id = 1
@@ -65,3 +84,6 @@ class InMemoeryMeasurementService(IMeasurementsService):
 
         cls.id += 1
         return m
+
+
+# zadanie: zaimplementuj servis JsonMeasurementsService(IMeasurementsService)

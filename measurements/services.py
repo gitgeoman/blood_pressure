@@ -7,20 +7,24 @@ from faker import Faker
 
 faker = Faker()
 
+
 @dataclass
 class Measurement:
     id: int
     date: datetime
     systolic: int
     diastolic: int
+
     def serialize(self):
         v = vars(self).copy()
-        v["date"] = v["date"].isoformat() 
+        v["date"] = v["date"].isoformat()
         return v
+
     @classmethod
     def deserialize(cls, data: dict) -> 'Measurement':
         data["date"] = datetime.fromisoformat(data["date"])
         return cls(**data)
+
 
 class IMeasurementsService(ABC):
 
@@ -31,7 +35,6 @@ class IMeasurementsService(ABC):
     @abstractmethod
     def create() -> Measurement:
         pass
-        
 
 
 class FakeMeasurementsService(IMeasurementsService):
@@ -39,26 +42,22 @@ class FakeMeasurementsService(IMeasurementsService):
 
     @classmethod
     def list(cls) -> list[Measurement]:
-        
         ms = []
         for i in range(1, 26):
             ms.append(
-       
+
                 Measurement(
                     id=i,
                     date=faker.date_time(),
-                    systolic = faker.random.randint(60, 250),
+                    systolic=faker.random.randint(60, 250),
                     diastolic=faker.random.randint(30, 180)
                 )
             )
-        
-    
+
         return ms
-    
-    
+
     @classmethod
     def create(cls, systolic: int, diastolic: int, date: datetime) -> Measurement:
-
         m = Measurement(
             id=1,
             date=date,
@@ -76,11 +75,9 @@ class InMemoeryMeasurementService(IMeasurementsService):
     @classmethod
     def list(cls) -> list[Measurement]:
         return cls.measurements
-    
 
     @classmethod
     def create(cls, systolic: int, diastolic: int, date: datetime) -> Measurement:
-
         m = Measurement(
             id=cls.id,
             date=date,
@@ -106,7 +103,7 @@ class JsonMeasurementService(IMeasurementsService):
         try:
             with open(cls.filename) as f:
                 raw_data = json.load(f)
-                data = [Measurement.deserialize(d) for d in raw_data] 
+                data = [Measurement.deserialize(d) for d in raw_data]
         except FileNotFoundError:
             data = []
 
@@ -114,7 +111,7 @@ class JsonMeasurementService(IMeasurementsService):
         return data
 
     @classmethod
-    def _save_data(cls, measurements: list[Measurement] ):
+    def _save_data(cls, measurements: list[Measurement]):
         print("Save data")
         serialized_data = [m.serialize() for m in measurements]
         with open(cls.filename, "w") as f:
@@ -124,7 +121,6 @@ class JsonMeasurementService(IMeasurementsService):
     def list(cls) -> list[Measurement]:
         measurements: list[Measurement] = cls._load_data()
         return measurements
-    
 
     @classmethod
     def create(cls, systolic: int, diastolic: int, date: datetime) -> Measurement:

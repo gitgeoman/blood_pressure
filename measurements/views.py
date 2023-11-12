@@ -1,9 +1,9 @@
+from datetime import datetime
 from django.shortcuts import render
-from .services import InMemoeryMeasurementService as service
+from .services import JsonMeasurementService as service
 # Create your views here.
 
 def list(request):
-    ms = service.list()
 
     if request.method == "GET":
         print(request.GET)
@@ -12,10 +12,13 @@ def list(request):
     if request.method == "POST":
         print(request.POST)
         service.create(
-            date=request.POST.get("mes_date"),
+            date=datetime.fromisoformat(request.POST.get("mes_date")),
             systolic=request.POST.get("mes_systolic"),
             diastolic=request.POST.get("mes_diastolic")
         )
+
+
+    ms = service.list()
 
     return render(
         request, 
